@@ -32,6 +32,9 @@ jobs:
         with:
           terraform_version: 1.6.6
 
+      - name: Instalar dependencias Python en proyecto_lambda/src/
+        run: pip install -r ./proyecto_lambda/src/requirements.txt -t ./proyecto_lambda/src/
+
       - name: Inicializar Terraform
         run: terraform init
 
@@ -42,9 +45,6 @@ jobs:
         id: get_outputs
         run: |
           echo "INPUT_BUCKET_NAME=$(terraform output -raw input_bucket_name)" >> $GITHUB_ENV
-
-      - name: Instalar dependencias Python
-        run: pip install -r ./src/requirements.txt
 
       - name: Subir archivos CSV a S3
         env:
