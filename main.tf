@@ -10,23 +10,6 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
-  # profile = "default" # Opcional
-}
-
-variable "aws_region" {
-  description = "Región de AWS"
-  type        = string
-  default     = "us-east-1"
-}
-
-variable "input_bucket_name" {
-  description = "Nombre del bucket de entrada"
-  type        = string
-}
-
-variable "output_bucket_name" {
-  description = "Nombre del bucket de salida"
-  type        = string
 }
 
 module "s3" {
@@ -35,8 +18,6 @@ module "s3" {
   output_bucket_name = var.output_bucket_name
   aws_region         = var.aws_region
 
-  # Si no usas provider alias, puedes eliminar providers = { aws = aws }
-  # providers = { aws = aws }
 }
 
 module "lambda" {
@@ -44,8 +25,7 @@ module "lambda" {
   input_bucket_name  = var.input_bucket_name
   output_bucket_name = var.output_bucket_name
   aws_region         = var.aws_region
-
-  # providers = { aws = aws }
+  
 
   depends_on = [module.s3]
 }
