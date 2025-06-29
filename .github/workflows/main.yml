@@ -27,7 +27,8 @@ jobs:
         run: chmod +x ./proyecto_lambda/build.sh
 
       - name: Ejecutar build.sh para generar function.zip
-        run: ./proyecto_lambda/build.sh
+        run: cd proyecto_lambda && ./build.sh
+
 
       - name: Configurar AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
