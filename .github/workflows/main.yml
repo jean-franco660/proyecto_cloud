@@ -1,15 +1,14 @@
-name: Subir CSVs a S3 (Trigger Lambda)
+name: Upload CSV to S3
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  upload_csv:
+  upload:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clonar el repositorio
+      - name: Checkout código
         uses: actions/checkout@v3
 
       - name: Configurar credenciales AWS
@@ -19,8 +18,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Subir todos los CSVs a S3/input/
+      - name: Subir CSV al bucket
         run: |
-          for file in csv/*.csv; do
-            aws s3 cp "$file" "s3://archivo-csv-entrada/input/$(basename $file)"
-          done
+          aws s3 cp csv/ s3://archivo-csv-entrada/input/ --recursive --exclude "*" --include "*.csv"
