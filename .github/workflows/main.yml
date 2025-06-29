@@ -17,8 +17,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clonar repositorio
+      - name: Clonar repositorio principal
         uses: actions/checkout@v3
+
+      - name: Clonar módulo Lambda
+        run: git clone https://github.com/jean-franco660/proyecto_lambda.git
+
+      - name: Instalar dependencias en proyecto_lambda/src/
+        run: pip install -r ./proyecto_lambda/src/requirements.txt -t ./proyecto_lambda/src/
 
       - name: Configurar AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
@@ -31,9 +37,6 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.6.6
-
-      - name: Instalar dependencias Python en proyecto_lambda/src/
-        run: pip install -r ./proyecto_Lambda/src/requirements.txt -t ./proyecto_Lambda/src/
 
       - name: Inicializar Terraform
         run: terraform init

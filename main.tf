@@ -22,7 +22,7 @@ module "s3" {
 }
 
 module "lambda" {
-  source             = "git::https://github.com/jean-franco660/proyecto_lambda.git"
+  source             = "./proyecto_lambda"
   input_bucket_name  = var.input_bucket_name
   output_bucket_name = var.output_bucket_name
   aws_region         = var.aws_region
