@@ -14,6 +14,10 @@ module "s3" {
   input_bucket_name  = var.input_bucket_name
   output_bucket_name = var.output_bucket_name
   aws_region         = var.aws_region
+
+    providers = { 
+        aws = aws 
+    }
 }
 
 # 🧠 Módulo Lambda: depende de los buckets del módulo S3
@@ -21,6 +25,7 @@ module "lambda" {
   source             = "git::https://github.com/jean-franco660/proyecto_lambda.git"
   input_bucket_name  = var.input_bucket_name
   output_bucket_name = var.output_bucket_name
+  aws_region         = var.aws_region
 
   providers = {
     aws = aws
