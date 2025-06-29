@@ -44,9 +44,9 @@ jobs:
           echo "INPUT_BUCKET_NAME=$(terraform output -raw input_bucket_name)" >> $GITHUB_ENV
 
       - name: Instalar dependencias Python
-        run: pip install -r src/requirements.txt
+        run: pip install -r ./src/requirements.txt
 
       - name: Subir archivos CSV a S3
         env:
           INPUT_BUCKET_NAME: ${{ env.INPUT_BUCKET_NAME }}
-        run: python src/upload_csv.py
+        run: python ./src/upload.py
