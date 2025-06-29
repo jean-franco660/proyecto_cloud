@@ -9,8 +9,10 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region  = var.aws_region
+  profile = "default"
 }
+
 
 module "s3" {
   source             = "git::https://github.com/jean-franco660/proyecto_s3.git"
