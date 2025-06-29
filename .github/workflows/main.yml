@@ -1,14 +1,20 @@
-name: Desplegar Infraestructura AWS
+name: Desplegar Infraestructura + Subir CSVs
 
 on:
   push:
     branches: [main]
+    paths:
+      - 'csv/**'
+      - '**.tf'
+      - '.github/workflows/main.yml'
+      - 'src/**'
+
+env:
+  AWS_REGION: us-east-1
 
 jobs:
-  terraform_deploy:
+  deploy_and_upload:
     runs-on: ubuntu-latest
-    env:
-      AWS_REGION: us-east-1 
 
     steps:
       - name: Clonar repositorio
@@ -19,21 +25,28 @@ jobs:
         with:
           terraform_version: 1.6.6
 
-      - name: Configurar credenciales AWS
+      - name: Inicializar Terraform
+        run: terraform init
+
+      - name: Aplicar configuración de Terraform
+        run: terraform apply -auto-approve
+
+      - name: Obtener nombre del bucket de entrada
+        id: get_outputs
+        run: |
+          echo "INPUT_BUCKET_NAME=$(terraform output -raw input_bucket_name)" >> $GITHUB_ENV
+
+      - name: Instalar dependencias Python
+        run: pip install -r src/requirements.txt
+
+      - name: Configurar AWS
         uses: aws-actions/configure-aws-credentials@v3
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-          
-      - name: Inicializar Terraform
-        run: terraform init
 
-      - name: Verificar formato Terraform
-        run: terraform fmt -check -recursive
-
-      - name: Validar configuración Terraform
-        run: terraform validate
-
-      - name: Aplicar infraestructura Terraform
-        run: terraform apply -auto-approve
+      - name: Subir archivos CSV a S3
+        env:
+          INPUT_BUCKET_NAME: ${{ env.INPUT_BUCKET_NAME }}
+        run: python src/upload_csv.py
