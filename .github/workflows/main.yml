@@ -23,8 +23,11 @@ jobs:
       - name: Clonar módulo Lambda
         run: git clone https://github.com/jean-franco660/proyecto_lambda.git
 
-      - name: Instalar dependencias en proyecto_lambda/src/
-        run: pip install -r ./proyecto_lambda/src/requirements.txt -t ./proyecto_lambda/src/
+      - name: Dar permisos al build.sh
+        run: chmod +x ./proyecto_lambda/build.sh
+
+      - name: Ejecutar build.sh para generar function.zip
+        run: ./proyecto_lambda/build.sh
 
       - name: Configurar AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
