@@ -41,13 +41,10 @@ jobs:
       - name: Planificar infraestructura
         run: terraform plan -out=tfplan
 
-      - name: Dar permisos de ejecución a build.sh
-        run: chmod +x proyecto_lambda/build.sh
-
-      - name: Instalar dependencias y generar ZIP de Lambda
+      - name: Instalar y generar ZIP de Lambda
         run: |
+          chmod +x proyecto_lambda/build.sh
           cd proyecto_lambda
-          pip install -r ./src/requirements.txt -t ./src/
           ./build.sh
 
       - name: Aplicar infraestructura
