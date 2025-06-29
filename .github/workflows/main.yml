@@ -28,6 +28,8 @@ jobs:
           cd proyecto_lambda
           pip install -r ./src/requirements.txt -t ./src/
           ./build.sh
+      - name: Dar permisos de ejecución a build.sh
+        run: chmod +x proyecto_lambda/build.sh
 
       - name: Configurar credenciales AWS
         uses: aws-actions/configure-aws-credentials@v3
