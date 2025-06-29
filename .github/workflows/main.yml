@@ -23,6 +23,15 @@ jobs:
       - name: Clonar módulo Lambda
         run: git clone https://github.com/jean-franco660/proyecto_lambda.git
 
+      - name: Dar permisos de ejecución a build.sh
+        run: chmod +x proyecto_lambda/build.sh
+
+      - name: Instalar dependencias y generar ZIP de Lambda
+        run: |
+          cd proyecto_lambda
+          pip install -r ./src/requirements.txt -t ./src/
+          ./build.sh
+
       - name: Configurar credenciales AWS
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -35,25 +44,18 @@ jobs:
         with:
           terraform_version: 1.6.6
 
-      - name: Inicializar Terraform
-        run: terraform init
+      - name: Inicializar Terraform (con upgrade)
+        run: terraform init -upgrade
 
       - name: Planificar infraestructura
         run: terraform plan -out=tfplan
-
-      - name: Instalar y generar ZIP de Lambda
-        run: |
-          chmod +x proyecto_lambda/build.sh
-          cd proyecto_lambda
-          ./build.sh
 
       - name: Aplicar infraestructura
         run: terraform apply -auto-approve tfplan
 
       - name: Obtener nombre del bucket de entrada
         id: get_outputs
-        run: |
-          echo "INPUT_BUCKET_NAME=$(terraform output -raw input_bucket_name)" >> $GITHUB_ENV
+        run: echo "INPUT_BUCKET_NAME=$(terraform output -raw input_bucket_name)" >> $GITHUB_ENV
 
       - name: Subir archivos CSV a S3
         env:
