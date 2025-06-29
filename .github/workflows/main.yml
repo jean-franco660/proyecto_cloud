@@ -23,14 +23,13 @@ jobs:
       - name: Clonar módulo Lambda
         run: git clone https://github.com/jean-franco660/proyecto_lambda.git
 
-      - name: Dar permisos al build.sh
-        run: chmod +x ./proyecto_lambda/build.sh
+      - name: Instalar dependencias y generar ZIP de Lambda
+        run: |
+          cd proyecto_lambda
+          pip install -r ./src/requirements.txt -t ./src/
+          ./build.sh
 
-      - name: Ejecutar build.sh para generar function.zip
-        run: cd proyecto_lambda && ./build.sh
-
-
-      - name: Configurar AWS Credentials
+      - name: Configurar credenciales AWS
         uses: aws-actions/configure-aws-credentials@v3
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -45,8 +44,11 @@ jobs:
       - name: Inicializar Terraform
         run: terraform init
 
-      - name: Aplicar configuración de Terraform
-        run: terraform apply -auto-approve
+      - name: Planificar infraestructura
+        run: terraform plan -out=tfplan
+
+      - name: Aplicar infraestructura
+        run: terraform apply -auto-approve tfplan
 
       - name: Obtener nombre del bucket de entrada
         id: get_outputs
